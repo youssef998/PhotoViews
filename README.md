@@ -1,5 +1,13 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
+# PhotoViews
+
+This Project is supposed to be a CRUD app. So Far it only can upload a photo and list them in the app.
+
+The repo works as it uploads the images in uploads folders and also in reads its data from the same folder. Each time the user uploads it is refreshed and update the list in the app.
+
+Backend works on local machine. but on the PC machine not the mobile. Please follow the steps so you can run the app.
+
 # Backend
 
 Welcome to the PhotoViews Backend repository. This repository contains the backend code for the PhotoViews project.
