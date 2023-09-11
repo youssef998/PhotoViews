@@ -2,9 +2,14 @@ import express, { Request, Response } from 'express';
 import multer from 'multer';
 const path = require('path');
 const fs = require('fs');
+
+// Create an Express application
 const app = express();
+
+// Define the port number where your server will listen
 const port = 3000;
 
+// Configure Multer for handling file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); // Specify the destination directory here
@@ -18,13 +23,15 @@ const storage = multer.diskStorage({
   },
 });
 
+// Create a Multer middleware instance
 const upload = multer({
-  storage: storage,
+  storage: storage,  // Use the storage configuration defined above
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
 
+// Handle HTTP POST requests to the '/upload' endpoint
 app.post('/upload', upload.single('photo'), async (req, res) => {
   try {
     // Check if a file was uploaded
@@ -42,7 +49,7 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
   }
 });
 
-// API endpoint to browse all uploaded photos
+// Define an API endpoint to browse all uploaded photos
 app.get('/photos', async (req, res) => {
     try {
       // Read the contents of the 'uploads' directory and return a list of filenames
@@ -58,9 +65,33 @@ app.get('/photos', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-  
+// Handle DELETE requests to delete a specific photo
+app.delete('/delete/:filename', async (req, res) => {
+  try {
+    const filenameToDelete = req.params.filename;
+    const filePath = path.join('uploads', filenameToDelete);
+
+    // Check if the file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    // Delete the file
+    fs.unlinkSync(filePath);
+
+    // Respond with a success message
+    res.status(200).json({ message: 'File deleted successfully' });
+  } catch (error) {
+    // Handle errors gracefully
+    console.error('Error deleting photo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
   // Serve images from the 'uploads' folder
 app.use('/uploads', express.static('uploads'));
+
+// Start the server and listen on the specified port
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
